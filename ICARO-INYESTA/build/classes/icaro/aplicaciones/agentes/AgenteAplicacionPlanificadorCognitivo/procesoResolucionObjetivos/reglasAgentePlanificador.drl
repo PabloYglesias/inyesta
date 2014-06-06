@@ -1,0 +1,101 @@
+import icaro.infraestructura.recursosOrganizacion.recursoTrazas.ItfUsoRecursoTrazas;
+import icaro.infraestructura.recursosOrganizacion.recursoTrazas.imp.componentes.InfoTraza;
+import icaro.infraestructura.entidadesBasicas.procesadorCognitivo.*;
+import icaro.infraestructura.patronAgenteCognitivo.procesadorObjetivos.gestorTareas.ItfGestorTareas;
+import icaro.infraestructura.entidadesBasicas.PerformativaUsuario;
+import icaro.infraestructura.entidadesBasicas.comunicacion.*
+
+import icaro.aplicaciones.agentes.AgenteAplicacionPlanificadorCognitivo.tareas.*;
+import icaro.aplicaciones.agentes.AgenteAplicacionPlanificadorCognitivo.objetivos.*;
+
+
+import icaro.aplicaciones.informacion.dominioClases.aplicacionPrediccion.VocabularioSistemaPrediccion;
+
+import icaro.aplicaciones.agentes.AgenteAplicacionPlanificadorCognitivo.informacion.*;
+
+global ItfGestorTareas gestorTareas;
+global ItfUsoRecursoTrazas recursoTrazas;
+global String agentId;
+
+// ===========================================================
+// Regla de objetivos iniciales
+rule "Creacion de los objectivos iniciales"
+when 
+then 
+TareaSincrona tarea = gestorTareas.crearTareaSincrona(InicializarInfoWorkMem.class);
+tarea.ejecutar();
+recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName()); 
+end
+
+
+// =======================================================================
+//Reglas de focalizacion.
+rule "Regla de focalizacion en objetivo RealizarPlanificacion"
+ when
+    f:Focus(foco == null )
+    obj:RealizarPlanificacion()
+ then
+    f.setFoco(obj);
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());
+    update(f);
+end
+
+
+//=======================================================================
+///Reglas de Consecucion del Objetivo RealizarPlanificacion
+rule "Inicio del proceso de consecucion del  objetivo RealizarPlanificacion"
+  when
+    obj:RealizarPlanificacion(state==Objetivo.PENDING)
+    Focus(foco ==obj)
+  then
+    obj.setSolving();
+    update(obj);
+end
+
+
+rule "Comprobacion de la existencia de datos en persistencia"
+   when
+    miPlanificacion: InfoParaPlanificar()
+    obj:RealizarPlanificacion(state==Objetivo.SOLVING)
+    Focus(foco == obj)
+   then
+    recursoTrazas.aceptaNuevaTraza(new InfoTraza(agentId,"Se ejecuta la tarea : ComprobarDatosPlanificacion",InfoTraza.NivelTraza.debug));
+     Tarea tarea = gestorTareas.crearTarea(ComprobarDatosPlanificacion.class);
+     tarea.ejecutar(miPlanificacion);
+    recursoTrazas.aceptaNuevaTraza(new InfoTraza(agentId,"Realizando el objetivo : "+obj.getgoalId()+"  Ejecutando la tarea : "+ tarea.getIdentTarea() ,InfoTraza.NivelTraza.debug));
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());
+end
+
+
+//Si los datos no existen, vamos a buscarlos
+rule "Extraccion de datos desde recursos externos"
+  when
+    miPlanificacion: InfoParaPlanificar()
+    obj:RealizarPlanificacion(state == Objetivo.SOLVING)
+    Focus(foco==obj)
+    informeTarea:InformeDeTarea(identTarea == "ComprobarDatosPlanificacion", contenidoInforme == "DatosNoExisten")
+then
+    recursoTrazas.aceptaNuevaTraza(new InfoTraza(agentId,"Se ejecuta la tarea : ExtraerDatos",InfoTraza.NivelTraza.debug));
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());
+   
+    Tarea tarea = gestorTareas.crearTarea(ExtraerDatos.class);
+    tarea.ejecutar(miPlanificacion,VocabularioSistemaPrediccion.IdentRecursoExtraccionPrediccion);
+    retract(informeTarea);
+end
+
+
+rule "Validacion de datos extraidos"
+  when
+    miPlanificacion: InfoParaPlanificar()
+    obj:RealizarPlanificacion(state == Objetivo.SOLVING)
+    Focus(foco==obj)
+    informeTarea:InformeDeTarea(identTarea == "ExtraerDatos", contenidoInforme == "DatosExtraidosCorrectamente")
+
+then
+    recursoTrazas.aceptaNuevaTraza(new InfoTraza(agentId,"Se ejecuta la tarea : ValidarDatosPlanificacion",InfoTraza.NivelTraza.debug));
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());
+   
+    Tarea tarea = gestorTareas.crearTarea(ValidarDatosPlanificacion.class);
+    tarea.ejecutar(miPlanificacion);
+    retract(informeTarea);
+end

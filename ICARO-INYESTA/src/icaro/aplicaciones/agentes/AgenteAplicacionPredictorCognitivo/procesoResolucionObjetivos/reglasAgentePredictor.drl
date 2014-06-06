@@ -1,0 +1,213 @@
+import icaro.infraestructura.recursosOrganizacion.recursoTrazas.ItfUsoRecursoTrazas;
+import icaro.infraestructura.recursosOrganizacion.recursoTrazas.imp.componentes.InfoTraza;
+import icaro.infraestructura.entidadesBasicas.procesadorCognitivo.*;
+import icaro.infraestructura.patronAgenteCognitivo.procesadorObjetivos.gestorTareas.ItfGestorTareas;
+import icaro.infraestructura.entidadesBasicas.PerformativaUsuario;
+import icaro.infraestructura.entidadesBasicas.comunicacion.*
+
+import icaro.aplicaciones.agentes.AgenteAplicacionPredictorCognitivo.tareas.*;
+import icaro.aplicaciones.agentes.AgenteAplicacionPredictorCognitivo.tareas.Equipo.*;
+import icaro.aplicaciones.agentes.AgenteAplicacionPredictorCognitivo.objetivos.*;
+
+import icaro.aplicaciones.informacion.dominioClases.aplicacionPrediccion.InfoPrediccionSinValidar;
+import icaro.aplicaciones.informacion.dominioClases.aplicacionPrediccion.VocabularioSistemaPrediccion;
+
+import icaro.aplicaciones.informacion.estructuraEquipos.*;
+import icaro.aplicaciones.agentes.AgenteAplicacionPredictorCognitivo.informacion.*;
+
+global ItfGestorTareas gestorTareas;
+global ItfUsoRecursoTrazas recursoTrazas;
+global String agentId;
+
+// ===========================================================
+// Regla de objetivos iniciales
+rule "Creacion de los objetivos iniciales"
+when 
+    not ( exists(Focus()))
+    not ( exists(MisObjetivos()))
+then 
+    TareaSincrona tarea = gestorTareas.crearTareaSincrona(InicializarInfoWorkMemTeam.class);
+    tarea.ejecutar();
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName()); 
+end
+
+//=======================================================
+// Objetivo Conocer Mi equipo Se conseguira este objetivo cuando el gagte tenga respuestas de los miembros de equipo
+// indicandole su equipo y su rol
+
+rule "Generacion Objetivo Conocer MiEquipo"
+when
+    focoActual : Focus(foco == null)
+    misObjs: MisObjetivos()
+
+ then
+    //se genera y se focaliza
+    DefinirMiEquipo definirMiequipoObj = new DefinirMiEquipo();
+    TareaSincrona tarea = gestorTareas.crearTareaSincrona(GenerarObjetivoyFocalizarlo.class);
+    tarea.ejecutar(definirMiequipoObj,misObjs,focoActual); 
+    System.out.println( "\n"+agentId +" EJECUTO LA REGLA: "+drools.getRule().getName()+"\n\n" );
+    System.out.println( "\n"+agentId + "Foco: NULL " +" \n\n" );
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());     
+end
+
+rule "Inicio consecucion Objetivo Conocer MiEquipo "
+when   
+    miEquipo: InfoEquipoAgentes(inicioContactoConEquipo== false,agentesIdentificados== false)
+    miStatus: PredictorStatus( IdPredictor == agentId )
+    obj1 : DefinirMiEquipo(state == Objetivo.SOLVING)
+    f : Focus(foco == obj1)
+then
+    TareaSincrona tarea = gestorTareas.crearTareaSincrona(ContactarMiembrosEquipo.class);
+    tarea.ejecutar(miStatus,miEquipo); 
+    System.out.println( "\n"+agentId +" EJECUTO LA REGLA: "+drools.getRule().getName()+"\n\n" );
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());     
+end
+
+rule "Proceso InfoRol para conseguir Objetivo Conocer MiEquipo "
+when   
+    miEquipo: InfoEquipoAgentes(idTeam:teamId,inicioContactoConEquipo== true,agentesIdentificados== false)
+    infoContEvt:InfoContEvtMsgAgteReactivo(msg soundslike "identificado" )
+    obj1 : DefinirMiEquipo(state == Objetivo.SOLVING)
+    focoActual : Focus(foco == obj1)
+then
+    TareaSincrona tarea = gestorTareas.crearTareaSincrona(ProcesarInfoRolAgente.class);
+    tarea.ejecutar(miEquipo,infoContEvt); 
+    System.out.println( "\n"+agentId +" EJECUTO LA REGLA: "+drools.getRule().getName()+"\n\n" );
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());  
+    retract(infoContEvt);   
+end
+
+rule "Consecucion del objetivo conocer equipo"
+when   
+    miEquipo: InfoEquipoAgentes(idTeam:teamId,agentesIdentificados== true)
+    obj1 : DefinirMiEquipo(state == Objetivo.SOLVING)
+    focoActual : Focus(foco == obj1) 
+then
+    obj1.setSolved();
+    System.out.println( "\n"+agentId +" EJECUTO LA REGLA: "+drools.getRule().getName()+"\n\n" );
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());     
+
+    focoActual.refocus(); 
+    update(focoActual);
+    update(obj1);
+end
+
+
+
+// =======================================================================
+//Reglas de focalizacion.
+rule "Regla de focalizacion en objetivo ObtenerPrediccion"
+ when
+   focoActual:Focus()
+    obj1:DefinirMiEquipo(state == Objetivo.SOLVED)
+    obj:ObtenerPrediccion(state == Objetivo.PENDING)
+ then
+    focoActual.setFoco(obj);
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());
+    update(focoActual);
+end
+
+//=======================================================================
+///Reglas de Consecucion del Objetivo ObtenerPrediccion
+rule "Inicio del proceso de consecucion del  objetivo ObtenerPrediccion"
+  when
+    obj:ObtenerPrediccion(state==Objetivo.PENDING)
+    Focus(foco == obj)
+  then
+    obj.setSolving();
+    update(obj);
+end
+
+
+rule "Solicitud de Datos Inicial"
+   when
+    obj:ObtenerPrediccion()
+    Focus(foco == obj)
+   then
+    recursoTrazas.aceptaNuevaTraza(new InfoTraza(agentId,"Se ejecuta la tarea : SolicitarDatosPrediccion",InfoTraza.NivelTraza.debug));
+     Tarea tarea = gestorTareas.crearTarea(SolicitarDatosPrediccion.class);
+     tarea.ejecutar(VocabularioSistemaPrediccion.IdentRecursoVisualizacionPrediccionInicial);
+    recursoTrazas.aceptaNuevaTraza(new InfoTraza(agentId,"Realizando el objetivo : "+obj.getgoalId()+"  Ejecutando la tarea : "+ tarea.getIdentTarea() ,InfoTraza.NivelTraza.debug));
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());
+end
+
+
+rule "Validacion de datos Iniciales de prediccion"
+  when
+    obj:ObtenerPrediccion(state == Objetivo.SOLVING)
+    Focus(foco==obj)   
+    infoContEvt:InfoContEvtMsgAgteReactivo(msg soundslike "validarPrediccion")
+    miEquipo: InfoEquipoAgentes(inicioContactoConEquipo== true,agentesIdentificados== true)
+then
+    recursoTrazas.aceptaNuevaTraza(new InfoTraza(agentId,"Se ejecuta la tarea : ValidarDatosPrediccionUsuarioIT",InfoTraza.NivelTraza.debug));
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());
+   
+    Tarea tarea = gestorTareas.crearTarea(ValidarDatosPrediccionUsuarioIT.class);
+    tarea.ejecutar(infoContEvt);
+    
+    TareaSincrona tarea2 = gestorTareas.crearTareaSincrona(InicializarInfoParaDecidir.class);
+    tarea2.ejecutar(miEquipo);
+
+    retract(infoContEvt);
+end
+
+
+rule "Permiso de prediccion con Informe Tarea"
+ when
+  obj:ObtenerPrediccion(state == Objetivo.SOLVING)
+  Focus(foco== obj)
+  informeTarea:InformeDeTarea(identTarea == "ValidarDatosPrediccionUsuarioIT", contenidoInforme == "datosValidos")
+ then
+  Tarea tarea = gestorTareas.crearTarea(SolicitarPrediccion.class);
+  tarea.ejecutar(VocabularioSistemaPrediccion.IdentRecursoVisualizacionPrediccionInicial);
+  retract(informeTarea);
+
+
+
+end
+
+rule "Insercion de prediccion"
+ when
+  InfoPrediccion: InfoParaDecidirPrediccion(todasLasPrediccionesRecibidas == false)
+  obj:ObtenerPrediccion(state == Objetivo.SOLVING)
+  Focus(foco== obj)
+  infoContEvt:InfoContEvtMsgAgteReactivo(msg soundslike "envioPrediccion" )
+ then
+  Tarea tarea = gestorTareas.crearTarea(ProcesarPrediccion.class);
+  tarea.ejecutar(InfoPrediccion,infoContEvt);
+  retract(infoContEvt);
+end
+
+rule "Muestra de la prediccion"
+ when
+  obj:ObtenerPrediccion(state == Objetivo.SOLVING)
+  Focus(foco== obj)  
+  InfoPrediccion: InfoParaDecidirPrediccion(todasLasPrediccionesRecibidas == true)
+ then
+  Tarea tarea = gestorTareas.crearTarea(MostrarPrediccion.class);
+  tarea.ejecutar(InfoPrediccion,VocabularioSistemaPrediccion.IdentRecursoVisualizacionPrediccionInicial);
+end
+
+rule "Denegacion del Prediccion con Informe Tarea"
+ when
+  obj:ObtenerPrediccion(state == Objetivo.SOLVING)
+  Focus(foco==obj)
+  informeTarea:InformeDeTarea(identTarea == "ValidarDatosPrediccionUsuarioIT", contenidoInforme == "datosNoValidos")
+ then
+    Tarea tarea = gestorTareas.crearTarea(DenegarPrediccion.class);
+    recursoTrazas.aceptaNuevaTraza(new InfoTraza(agentId,"Resolviendo el objetivo : "+obj.getgoalId()+"  Ejecutando la tarea : "+ tarea.getIdentTarea() ,InfoTraza.NivelTraza.debug));
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());
+    tarea.ejecutar(VocabularioSistemaPrediccion.IdentRecursoVisualizacionPrediccionInicial);
+    retract(informeTarea);
+end
+
+rule "Permiso de Prediccion con Creencia"
+ when
+  cre:Creencia(emisor=="ValidarDatosPrediccionUsuarioGenCre",contenido == "datosValidos")
+  obj:ObtenerPrediccion(state == Objetivo.SOLVING)
+  Focus(foco == obj)
+ then
+  Tarea tarea = gestorTareas.crearTarea(SolicitarPrediccion.class);
+  tarea.ejecutar(VocabularioSistemaPrediccion.IdentRecursoVisualizacionPrediccionInicial);
+  retract(cre);
+end

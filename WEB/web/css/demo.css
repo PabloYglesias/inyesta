@@ -1,0 +1,462 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
+@font-face {
+	font-family: 'codropsicons';
+	src:url('../fonts/codropsicons/codropsicons.eot');
+	src:url('../fonts/codropsicons/codropsicons.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/codropsicons/codropsicons.woff') format('woff'),
+		url('../fonts/codropsicons/codropsicons.ttf') format('truetype'),
+		url('../fonts/codropsicons/codropsicons.svg#codropsicons') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body {
+	background: #34495e;
+	
+}
+
+.container > header,
+.codrops-top {
+	color: #fff;
+	font-family: 'Lato', Arial, sans-serif;
+}
+
+.container > header {
+	margin: 0 auto;
+	padding: 12em 12em;
+	padding-top: 4.5em;
+	background: rgba(0,0,0);
+
+	min-height:100%;
+}
+
+.container > header a {
+	color: #FFF;
+	text-decoration: none;
+	outline: none;
+	
+}
+
+.container > header a:hover {
+	color: #4f7bab;
+}
+
+.container > header h1 {
+	font-size: 3.2em;
+	line-height: 1.3;
+	margin: 0;
+	font-weight: 300;
+	
+}
+
+.container > header span {
+	display: block;
+	color: #acacac;
+	padding: 0 0 0.6em 0.1em;
+	padding-top:1.5em;
+}
+
+/* To Navigation Style */
+.codrops-top {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.6);
+	text-transform: uppercase;
+	width: 100%;
+	font-size: 0.69em;
+	line-height: 2.2;
+}
+
+.codrops-top a {
+	text-decoration: none;
+	padding: 0 1em;
+	letter-spacing: 0.1em;
+	color: #888;
+	display: inline-block;
+}
+
+.codrops-top a:hover {
+	background: rgba(255,255,255,0.95);
+	color: #333;
+}
+
+.codrops-top span.right {
+	float: right;
+}
+
+.codrops-top span.right a {
+	float: left;
+	display: block;
+}
+
+.codrops-icon:before {
+	font-family: 'codropsicons';
+	margin: 0 4px;
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+.codrops-icon-drop:before {
+	content: "\e001";
+}
+
+.codrops-icon-prev:before {
+	content: "\e004";
+}
+
+/* Demo Buttons Style */
+.codrops-demos {
+	padding-top: 1em;
+	font-size: 0.9em;
+}
+
+.codrops-demos a {
+	text-decoration: none;
+	outline: none;
+	display: inline-block;
+	margin: 0.5em;
+	padding: 0.7em 1.1em;
+	border: 3px solid #b1aea6;
+	color: #b1aea6;
+	font-weight: 700;
+}
+
+.codrops-demos a:hover,
+.codrops-demos a.current-demo,
+.codrops-demos a.current-demo:hover {
+	border-color: #89867e;
+	color: #89867e;
+}
+
+button {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: -moz-linear-gradient(top,#6a7b86 0%,#424f5a 100%);
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#6a7b86),color-stop(100%,#424f5a));
+    background: -webkit-linear-gradient(top,#6a7b86 0%,#424f5a 100%);
+    background: -o-linear-gradient(top,#6a7b86 0%,#424f5a 100%);
+    background: -ms-linear-gradient(top,#6a7b86 0%,#424f5a 100%);
+    background: linear-gradient(top,#6a7b86 0%,#424f5a 100%);
+    padding: 2rem;
+    border: none;
+    border-radius: 5px;
+    margin-right: 25%;
+    margin-top:2rem;
+}
+
+.subinput{
+	margin-left:1.5rem;
+}
+
+.container > header > #image{
+	margin-left:-50px;
+		margin-top: -65px;
+		width:100%;
+		z-index:0;
+}
+
+input{
+    width:90%;
+    vertical-align:top;
+    margin: 0 auto 0.5rem;
+    padding: 1rem;
+    font-weight:bold;
+    text-align:center;
+    border-radius:5px;
+    margin-bottom:-1em;
+}
+
+.myCheckbox{
+	float:left;
+}
+
+.myCheckboxLabel{
+	float:left;
+	margin-left:20px;
+	margin-top:-2px;
+}
+
+.clear{
+	margin-top:-40px;
+	clear:both;
+}
+
+
+ table.gridtable {
+            font-family: verdana,arial,sans-serif;
+            font-size:10px;
+            color:#333333;
+            border-color:none;
+            border-collapse: collapse;
+            margin-left:-50px;
+            width:362px;
+        }
+
+        table.gridtable th {
+            border-width: 1px;
+            padding: 9px;
+            width:32.70%;
+            color:#FFF;
+            background-color: #5f6f81;
+        }
+        table.gridtable td {
+            border-width: 1px;
+            padding: 8px;
+            width:20%;
+            background-color: #ffffff;
+        }
+        table, th, td {
+        }
+       td {border-left: 1px solid white;}
+       tr,td,th
+       {
+            font-size: 14px;
+         
+        }
+        tr {
+            
+        }
+
+        h2{
+        }
+        .container > header h1 {
+            margin-left:-40px;
+        }
+
+
+#partidos{
+	width:30%;
+	padding-right:.5rem;
+	float:left;
+}
+
+#home{
+	width:50%;
+	float:left;
+}
+
+#partido {
+	margin-top:0.5rem;
+	margin-bottom:1rem;
+}
+
+#equipo1{
+	float:left;
+}
+
+#equipo2{
+	float:right;
+}
+
+#apostar{
+	float:left;
+}
+
+#apuestabutton{
+	padding:0;
+	padding-left:0.2rem;
+	padding-right:0.2rem;
+	margin:0;
+	margin-left:0.8rem;
+}
+
+#resultado{
+	clear:both;
+	padding-top:.5rem;
+}
+
+#participa{
+	float:left;
+	width:85%;
+	margin-left:.5rem;
+	margin-right:-9rem;
+}
+
+#homeh1{
+	margin-left:.01rem;
+}
+
+#prediccion{
+	margin-right:-8rem;
+	margin-bottom:2rem;
+}
+
+footer{
+	clear:both;
+	width:100%;
+	background-color:#222;
+	z-index:10000;
+	height:8rem;
+	color:#777;
+	font-size:.8rem;
+}
+
+footer a{
+	color:#777;
+}
+
+#footerleft{
+	float:left;
+	margin-top:3rem;
+	margin-left:4rem;
+}
+
+#footerright{
+	float:right;
+	margin-top:3rem;
+	margin-right:4rem;
+}
+
+.historico{
+	position:relative;
+}
+
+.historialimg{
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:1;
+}
+
+.historialtext{
+	width:550px;
+}
+
+#estimacion{
+	float:left;
+	margin-top:0.3rem;
+}
+
+#solucion{
+	float:left;
+	margin-left:1rem;
+}
+
+#tiempo{
+	float:right;
+	margin-left:1rem;
+	margin-top:0.3rem;
+}
+
+#clear{
+	clear:both;
+	margin-bottom:2rem;
+}
+
+#contenedor_apuesta{
+	width:30%;
+	padding-right:.5rem;
+	float:left;
+}
+
+#contenedor_ultimos_partidos{
+	width:70%;
+	float:left;
+}
+
+#camiseta1{
+	float:left;
+}
+
+#camiseta2{
+	float:left;
+}
+
+#ultimos_partidos{
+	float:left;
+}
+
+#pronostico{
+	width:100%;
+	border-collapse:collapse;
+	margin-top:1rem;
+	margin-bottom:1rem;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#pronostico th,td{
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border: 1px solid white;
+	text-align:center;
+}
+
+#pronostico th{
+	background-color:#242;
+}
+
+#green{
+	background-color:#224;
+}
+
+#red{
+	background-color:#722;
+}
+
+#equipo1u{
+	margin-left:2rem;
+	float:left;
+}
+
+#equipo2u{
+	margin-right:3rem;
+	float:right;
+}
+
+#handicap1{
+	width:48%;
+	padding-right:.5rem;
+	float:left;
+}
+
+#handicap2{
+	width:48%;
+	float:left;
+}
+
+#contenedor_info{
+	width:100%;
+	float:left;
+	margin-bottom:3rem;
+}
+
+@media screen and (max-width: 1025px) {
+	.container > header {
+		margin: 0 auto;
+		padding: 120px 10px;
+		padding-top: 4em;
+	}
+}
+
+@media screen and (max-width: 740px) {
+
+	.codrops-icon span {
+		display: none;
+	}
+
+	.app{
+		margin-top:-2rem;
+	}
+	
+	.app-form{
+		padding-top:2rem;
+	}
+
+	.app-image{
+		width:60%;
+		margin-top:0rem;
+		margin-left:-2rem;
+		margin-right:-1rem;
+	}
+
+	.app-info{
+		width:55%;
+		margin-top:0rem;
+	}
+}
