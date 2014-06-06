@@ -10,6 +10,7 @@ package icaro.aplicaciones.agentes.AgenteAplicacionPlanificadorCognitivo.tareas;
 import icaro.aplicaciones.informacion.dominioClases.aplicacionPrediccion.InfoPrediccionSinValidar;
 import icaro.aplicaciones.informacion.dominioClases.aplicacionPrediccion.VocabularioSistemaPrediccion;
 import icaro.aplicaciones.recursos.ExtraccionPrediccion.ItfUsoExtraccionPrediccion;
+import icaro.aplicaciones.recursos.persistenciaPrediccionBD.ItfUsoPersistenciaPrediccionBD;
 import icaro.aplicaciones.recursos.visualizacionAcceso.imp.NotificacionesEventosVisAcceso;
 import icaro.aplicaciones.recursos.visualizacionPrediccion.ItfUsoVisualizadorPrediccion;
 import icaro.infraestructura.entidadesBasicas.procesadorCognitivo.Tarea;
@@ -41,17 +42,17 @@ public class InsertarDatos extends Tarea {
         
         try {
             identAgenteOrdenante = this.getIdentAgente();
-            ItfUsoExtraccionPrediccion extraccionPrediccion = (ItfUsoExtraccionPrediccion) NombresPredefinidos.REPOSITORIO_INTERFACES_OBJ
-                    .obtenerInterfaz(NombresPredefinidos.ITF_USO + identRecursoExtraccion);
-            if (extraccionPrediccion == null) {
+            ItfUsoPersistenciaPrediccionBD persistenciaPrediccion = (ItfUsoPersistenciaPrediccionBD) NombresPredefinidos.REPOSITORIO_INTERFACES_OBJ.obtenerInterfaz(
+                    NombresPredefinidos.ITF_USO + VocabularioSistemaPrediccion.IdentRecursoPersistenciaBDPrediccion);
+            if (persistenciaPrediccion == null) {
                 this.generarInformeConCausaTerminacion(identDeEstaTarea, contextoEjecucionTarea, identAgenteOrdenante, "Error-AlObtener:Interfaz_Recurso:" + identRecursoExtraccion, CausaTerminacionTarea.ERROR);
             } else 
             {
                 
                 //Insertamos los datos y acabamos con el objetivo
-
+                //persistenciaPrediccion.insertarHistoricoClubs(identDeEstaTarea, identDeEstaTarea);
                 
-                this.generarInformeOK(identDeEstaTarea, contextoEjecucionTarea, identAgenteOrdenante, VocabularioSistemaPrediccion.DatosExtraidosCorrectamente);
+                this.generarInformeOK(identDeEstaTarea, contextoEjecucionTarea, identAgenteOrdenante, VocabularioSistemaPrediccion.StandBy);
             }
         } catch (Exception e) {
             this.generarInformeConCausaTerminacion(identDeEstaTarea, contextoEjecucionTarea, identAgenteOrdenante, "Error-AlUtilizar:Interfaces_Recurso:" + identRecursoExtraccion, CausaTerminacionTarea.ERROR);

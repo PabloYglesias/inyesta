@@ -320,7 +320,7 @@ public class PersistenciaPrediccionImp {
             desconectar();
 
         } catch (Exception e) {
-            throw new ErrorEnRecursoException(e.getMessage());
+           // throw new ErrorEnRecursoException(e.getMessage());
         }
         return Clubs;
     }

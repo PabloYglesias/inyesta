@@ -92,11 +92,12 @@ public class ExtraerDatos extends Tarea {
                     InfoPlanificar.setHistoricoTemporadas(infoHistTemporada);
                     persistenciaPrediccion.insertarTemporadas(infoHistTemporada);
                 }
-               
-                            
+
                 
                 this.generarInformeOK(identDeEstaTarea, contextoEjecucionTarea, identAgenteOrdenante, VocabularioSistemaPrediccion.DatosExtraidosCorrectamente);
             }
+                
+                
         } catch (Exception e) {
             this.generarInformeConCausaTerminacion(identDeEstaTarea, contextoEjecucionTarea, identAgenteOrdenante, "Error-AlUtilizar:Interfaces_Recurso:" + identRecursoExtraccion, CausaTerminacionTarea.ERROR);
             e.printStackTrace();

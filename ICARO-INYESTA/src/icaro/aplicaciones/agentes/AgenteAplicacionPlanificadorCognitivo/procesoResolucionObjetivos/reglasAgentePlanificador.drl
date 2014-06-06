@@ -28,6 +28,8 @@ recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.
 end
 
 
+
+
 // =======================================================================
 //Reglas de focalizacion.
 rule "Regla de focalizacion en objetivo RealizarPlanificacion"
@@ -98,4 +100,60 @@ then
     Tarea tarea = gestorTareas.crearTarea(ValidarDatosPlanificacion.class);
     tarea.ejecutar(miPlanificacion);
     retract(informeTarea);
+end
+
+rule "Insercion de datos"
+  when
+    miPlanificacion: InfoParaPlanificar()
+    obj:RealizarPlanificacion(state == Objetivo.SOLVING)
+    Focus(foco==obj)
+    informeTarea:InformeDeTarea(identTarea == "ValidarDatosPlanificacion", contenidoInforme == "DatosPlanificacionValidados")
+
+then
+    recursoTrazas.aceptaNuevaTraza(new InfoTraza(agentId,"Se ejecuta la tarea : InsercionDatosPlanificacion",InfoTraza.NivelTraza.debug));
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());
+   
+    Tarea tarea = gestorTareas.crearTarea(InsertarDatos.class);
+    tarea.ejecutar(miPlanificacion);
+    retract(informeTarea);
+end
+
+rule "StandBy"
+  when
+    miPlanificacion: InfoParaPlanificar()
+    obj:RealizarPlanificacion(state == Objetivo.SOLVING)
+    focoActual : Focus(foco==obj)
+    informeTarea:InformeDeTarea(contenidoInforme == "doStandBy")
+
+then
+    
+    recursoTrazas.aceptaNuevaTraza(new InfoTraza(agentId,"Se ejecuta la tarea : InsercionDatosPlanificacion",InfoTraza.NivelTraza.debug));
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());
+   
+    Tarea tarea = gestorTareas.crearTarea(StandBy.class);
+    tarea.ejecutar(miPlanificacion);
+    retract(informeTarea); 
+    
+    obj.setSolved();
+    //focoActual.refocus(); 
+    //update(focoActual); No refocus
+    update(obj);
+
+end
+
+// Regla de objetivos iniciales
+rule "Reinicio"
+when 
+    informeTarea:InformeDeTarea(contenidoInforme == "ReiniciarPlanificacion")
+    miPlanificacion: InfoParaPlanificar()
+    obj:RealizarPlanificacion(state == Objetivo.SOLVING)
+    focoActual : Focus(foco==obj)
+then 
+    retract(informeTarea);
+    retract(miPlanificacion);
+    retract(obj);
+
+    TareaSincrona tarea = gestorTareas.crearTareaSincrona(InicializarInfoWorkMem.class);
+    tarea.ejecutar();
+    recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName()); 
 end

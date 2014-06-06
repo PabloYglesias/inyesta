@@ -71,15 +71,15 @@ public class ValidarDatosPlanificacion extends Tarea {
                 this.generarInformeConCausaTerminacion(identTarea, contextoEjecucionTarea, identAgenteOrdenante, "Error-AlObtener:Interfaz_" + IdentRecursoPersistencia, CausaTerminacionTarea.ERROR);
             } else 
             {
-                //Los mandamos al recurso de validacion
-                boolean resultadoValidacion = itfUsoPersistencia.compruebaPartido(infoPrediccion.tomaEquipo1(),
-                        infoPrediccion.tomaEquipo2(), infoPrediccion.tomaFecha());
+                //Los mandamos al recurso de validacion, sin implementar
+                boolean resultadoValidacion = itfUsoPersistencia.compruebaPartido(infoPrediccion.tomaEquipo1(),infoPrediccion.tomaEquipo2(), infoPrediccion.tomaFecha());
 
                 String contenidoInformeTarea;
-                if (resultadoValidacion) {
+                if (resultadoValidacion) 
+                {
                     contenidoInformeTarea = VocabularioSistemaPrediccion.ResultadoPrediccion_DatosValidados;
                 } else {
-                    contenidoInformeTarea = VocabularioSistemaPrediccion.ResultadoPrediccion_DatosNoValidados;
+                    contenidoInformeTarea = VocabularioSistemaPrediccion.StandBy;
                 }
                
                this.generarInformeOK(identTarea, contextoEjecucionTarea, identAgenteOrdenante, contenidoInformeTarea);

@@ -76,7 +76,7 @@ public class ComprobarDatosPlanificacion extends Tarea {
             if (resultadoComprobacion) {
                 contenidoInformeTarea = VocabularioSistemaPrediccion.ResultadoComprobacionPlanificador_DatosNoExisten;
             } else {
-                contenidoInformeTarea = VocabularioSistemaPrediccion.ResultadoComprobacionPlanificador_DatosYaExisten;
+                contenidoInformeTarea = VocabularioSistemaPrediccion.StandBy;
             }
             this.generarInformeOK(identDeEstaTarea, contextoEjecucionTarea, identAgenteOrdenante, contenidoInformeTarea);
 
@@ -110,7 +110,7 @@ public class ComprobarDatosPlanificacion extends Tarea {
             
             
         } catch (Exception ex) {
-            Logger.getLogger(ComprobarDatosPlanificacion.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         return bHistoricoTemporada;
     }

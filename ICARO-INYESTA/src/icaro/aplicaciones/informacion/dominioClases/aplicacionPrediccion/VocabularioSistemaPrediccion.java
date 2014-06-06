@@ -26,6 +26,8 @@ public class VocabularioSistemaPrediccion
     public static final String ResultadoComprobacionPlanificador_DatosNoExisten="DatosNoExisten";
     public static final String ResultadoComprobacionPlanificador_DatosYaExisten="DatosYaExisten";    
     public static final String DatosExtraidosCorrectamente="DatosExtraidosCorrectamente";
+    public static final String ReiniciarPlanificacion="ReiniciarPlanificacion";
+    public static final String StandBy="doStandBy";
     public static final String IdentRecursoValidacion="ValidadorDatos1";
     public static String ResultadoPrediccion_DatosValidados="DatosPlanificacionValidados";
     public static String ResultadoPrediccion_DatosNoValidados="DatosPlanificacionNoValidados";

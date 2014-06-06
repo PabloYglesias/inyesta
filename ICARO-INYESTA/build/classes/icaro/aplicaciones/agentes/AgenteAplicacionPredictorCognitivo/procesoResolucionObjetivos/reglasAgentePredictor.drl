@@ -50,7 +50,7 @@ when
     recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());     
 end
 
-rule "Inicio consecucion Objetivo Conocer MiEquipo "
+rule "Inicio consecucion Objetivo Conocer MiEquipo"
 when   
     miEquipo: InfoEquipoAgentes(inicioContactoConEquipo== false,agentesIdentificados== false)
     miStatus: PredictorStatus( IdPredictor == agentId )
@@ -63,7 +63,7 @@ then
     recursoTrazas.aceptaNuevaTrazaEjecReglas(agentId," EJECUTO LA REGLA: " + drools.getRule().getName());     
 end
 
-rule "Proceso InfoRol para conseguir Objetivo Conocer MiEquipo "
+rule "Proceso InfoRol para conseguir Objetivo Conocer MiEquipo"
 when   
     miEquipo: InfoEquipoAgentes(idTeam:teamId,inicioContactoConEquipo== true,agentesIdentificados== false)
     infoContEvt:InfoContEvtMsgAgteReactivo(msg soundslike "identificado" )
